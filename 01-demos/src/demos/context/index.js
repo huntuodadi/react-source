@@ -5,12 +5,12 @@ const { Provider, Consumer } = React.createContext('default')
 
 class Parent extends React.Component {
   state = {
-    childContext: '123',
+    childContext1: '123',
     newContext: '456',
   }
 
   getChildContext() {
-    return { value: this.state.childContext, a: 'aaaaa' }
+    return { value: this.state.childContext1, a: 'aaaaa' }
   }
 
   render() {
@@ -20,8 +20,8 @@ class Parent extends React.Component {
           <label>childContext:</label>
           <input
             type="text"
-            value={this.state.childContext}
-            onChange={e => this.setState({ childContext: e.target.value })}
+            value={this.state.childContext1}
+            onChange={e => this.setState({ childContext1: e.target.value })}
           />
         </div>
         <div>
@@ -32,7 +32,7 @@ class Parent extends React.Component {
             onChange={e => this.setState({ newContext: e.target.value })}
           />
         </div>
-        <Provider value={this.state.newContext}>{this.props.children}</Provider>
+        <Provider value={{newContext: this.state.newContext, providerValue: this.state.childContext1}}>{this.props.children}</Provider>
       </>
     )
   }
@@ -51,7 +51,10 @@ class Parent2 extends React.Component {
 
 function Child1(props, context) {
   console.log(context)
-  return <Consumer>{value => <p>newContext: {value}</p>}</Consumer>
+  return <Consumer>{(a) => {
+    console.log('value:', a);
+    return <p>{a.newContext}</p>
+  }}</Consumer>
 }
 
 Child1.contextTypes = {
@@ -62,7 +65,8 @@ class Child2 extends React.Component {
   render() {
     return (
       <p>
-        childContext: {this.context.value} {this.context.a}
+        childContext: value: {this.context.value} a: {this.context.a}
+        providecontext: <Consumer>{value => <p>{value.newContext}</p>}</Consumer>
       </p>
     )
   }
